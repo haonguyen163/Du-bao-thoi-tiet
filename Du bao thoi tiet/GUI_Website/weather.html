@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyCast Weather - Blue Theme</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* 1. Cài đặt chung */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* Background màu trời xanh nhạt */
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); 
+            /* Hoặc dùng màu xanh thuần: background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); */
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            padding: 20px;
+        }
+
+        /* 2. Thẻ kính (Glass Card) Tổng */
+        .weather-card {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 850px;
+            /* Nền trắng mờ */
+            background: rgba(255, 255, 255, 0.85); 
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* 3. Cột Trái - Xanh Dương (Điểm nhấn) */
+        .current-weather {
+            flex: 0.8; /* Chiếm 40% diện tích */
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* Gradient Xanh Dương Đậm */
+            background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            position: relative;
+        }
+
+        /* Trang trí thêm vòng tròn mờ phía sau cho đẹp */
+        .current-weather::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        .date-container .day {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .date-container .date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .location {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            width: fit-content;
+        }
+
+        .weather-info {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .weather-icon {
+            font-size: 90px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+        }
+
+        .temp {
+            font-size: 90px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .desc {
+            font-size: 20px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        /* 4. Cột Phải - Trắng (Chi tiết) */
+        .forecast-panel {
+            flex: 1.2; /* Chiếm 60% diện tích */
+            padding: 40px;
+            color: #2c3e50; /* Chữ màu tối */
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .panel-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Nút đổi C/F giả lập */
+        .unit-toggle {
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .unit-toggle span.active {
+            color: #2c3e50;
+        }
+        .unit-toggle span {
+            color: #ccc;
+        }
+
+        /* Grid hiển thị chỉ số phụ */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 3 cột */
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .detail-card {
+            background: #f4f7f6; /* Xám cực nhạt */
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-5px);
+            background: #eef2f5;
+        }
+
+        .detail-card i {
+            color: #4facfe; /* Icon màu xanh dương */
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .detail-card span {
+            display: block;
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 3px;
+        }
+
+        .detail-card strong {
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        /* List dự báo */
+        .week-list {
+            list-style: none;
+        }
+
+        .week-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .week-list li:hover {
+            background: #f9f9f9;
+        }
+
+        .day-name {
+            width: 80px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        .week-icon {
+            color: #f39c12; /* Màu icon nắng vàng */
+        }
+        .week-icon.rain {
+            color: #4facfe; /* Màu icon mưa xanh */
+        }
+
+        .day-temp {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* 5. Responsive */
+        @media (max-width: 768px) {
+            .weather-card {
+                flex-direction: column;
+            }
+            .current-weather {
+                padding: 30px;
+                border-radius: 30px 30px 0 0;
+            }
+            .forecast-panel {
+                padding: 25px;
+            }
+            .details-grid {
+                grid-template-columns: 1fr 1fr; /* Xuống 2 cột cho mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="weather-card">
+        <div class="current-weather">
+            <div class="date-container">
+                <div class="day">Thứ Năm</div>
+                <div class="date">27/11/2025</div>
+            </div>
+            
+            <div class="location">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Bình Thạnh, HCM</span>
+            </div>
+
+            <div class="weather-info">
+                <div class="weather-icon">
+                    <i class="fa-solid fa-cloud-sun"></i>
+                </div>
+                <h1 class="temp">31°C</h1>
+                <div class="desc">Nắng đẹp</div>
+            </div>
+        </div>
+
+        <div class="forecast-panel">
+            <div class="panel-header">
+                <h2>Chỉ số hôm nay</h2>
+                <div class="unit-toggle">
+                    <span class="active">°C</span> | <span>°F</span>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-card">
+                    <i class="fa-solid fa-wind"></i>
+                    <span>Gió</span>
+                    <strong>12 km/h</strong>
+                </div>
+                <div class="detail-card">
+                    <i class="fa-solid fa-droplet"></i>
+                    <span>Độ ẩm</span>
+                    <strong>65%</strong>
+                </div>
+                <div class="detail-card">
+                    <i class="fa-solid fa-eye"></i>
+                    <span>Tầm nhìn</span>
+                    <strong>10 km</strong>
+                </div>
+            </div>
+
+            <div class="panel-header" style="margin-bottom: 15px;">
+                <h2>Dự báo tuần này</h2>
+            </div>
+
+            <ul class="week-list">
+                <li>
+                    <span class="day-name">Thứ 6</span>
+                    <i class="fa-solid fa-cloud-rain week-icon rain"></i>
+                    <span class="day-temp">28°C</span>
+                </li>
+                <li>
+                    <span class="day-name">Thứ 7</span>
+                    <i class="fa-solid fa-sun week-icon"></i>
+                    <span class="day-temp">32°C</span>
+                </li>
+                <li>
+                    <span class="day-name">Chủ Nhật</span>
+                    <i class="fa-solid fa-cloud week-icon rain"></i>
+                    <span class="day-temp">30°C</span>
+                </li>
+                <li>
+                    <span class="day-name">Thứ 2</span>
+                    <i class="fa-solid fa-bolt week-icon rain"></i>
+                    <span class="day-temp">27°C</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

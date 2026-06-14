@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyCast - Chế độ khách</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../public/css/style.css">
+    
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-cloud-bolt"></i> SkyCast
+            </div>
+            <ul class="menu-list">
+                <li class="menu-item active"><i class="fa-solid fa-chart-pie"></i> Tổng quan</li>
+                <!-- <li class="menu-item"><i class="fa-solid fa-location-dot"></i> Bản đồ</li> -->
+                <a href="guest_bando.html" style="text-decoration: none; display: block;">
+                    <li class="menu-item" style="justify-content: space-between; transition: 0.3s;">
+                        <span style="display: flex; gap: 15px; align-items: center;">
+                            <i class="fa-solid fa-map-location-dot"></i> Bản đồ
+                        </span>
+
+                        <!-- <i class="fa-solid fa-lock" style="font-size: 12px; opacity: 0.6;"></i> -->
+                    </li>
+                </a>
+            </ul>
+
+            <div class="auth-buttons">
+                <a href="../login.html" class="btn-sidebar-login">Đăng nhập</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <div>
+                    <h1>Chào bạn mới!</h1>
+                    <p>Khám phá thời tiết hôm nay nhé.</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass" style="color: #ccc;"></i>
+                        <input type="text" placeholder="Tìm thành phố...">
+                    </div>
+                    <a href="../register.html" class="btn-register-cta">Đăng ký ngay</a>
+                </div>
+            </header>
+
+            <div class="bento-grid">
+
+                <div class="card main-weather-card">
+                    <div class="card-header">
+                        <span class="card-title"><i class="fa-solid fa-location-dot"></i> Hà Nội</span>
+                    </div>
+                    <div class="temp-display">
+                        <div class="big-temp">24°C</div>
+                        <i class="fa-solid fa-cloud big-icon"></i>
+                    </div>
+                    <div class="weather-meta">
+                        <div class="meta-item"><i class="fa-solid fa-droplet"></i> 80%</div>
+                        <div class="meta-item"><i class="fa-solid fa-wind"></i> 5 km/h</div>
+                    </div>
+                </div>
+
+                <div class="card chart-card" style="position: relative;">
+                    <div class="locked-feature" style="width: 100%; text-align: center;">
+                        <h3>Biểu đồ nhiệt độ</h3>
+                        <p>Dữ liệu chi tiết 24h</p>
+                        <div style="height: 50px; background: #eee; margin-top: 10px; border-radius: 10px;"></div>
+                    </div>
+
+                    <div class="lock-overlay">
+                        <i class="fa-solid fa-lock lock-icon"></i>
+                        <span class="lock-text">Đăng nhập để xem biểu đồ</span>
+                    </div>
+                </div>
+
+                <div class="card forecast-list-card">
+                    <div class="card-header">
+                        <span class="card-title">Dự báo 3 ngày tới</span>
+                    </div>
+                    <div class="forecast-row">
+                        <span class="f-day">Thứ 6</span>
+                        <i class="fa-solid fa-cloud-rain f-icon"></i>
+                        <span class="f-temp">22°C</span>
+                    </div>
+                    <div class="forecast-row">
+                        <span class="f-day">Thứ 7</span>
+                        <i class="fa-solid fa-sun f-icon" style="color: orange;"></i>
+                        <span class="f-temp">26°C</span>
+                    </div>
+                    <div class="forecast-row">
+                        <span class="f-day">CN</span>
+                        <i class="fa-solid fa-cloud f-icon"></i>
+                        <span class="f-temp">24°C</span>
+                    </div>
+                    <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--accent-color);">
+                        <a href="register.html" style="text-decoration: none; color: inherit;">Xem thêm 4 ngày nữa
+                            -></a>
+                    </div>
+                </div>
+
+                <div class="card promo-card">
+                    <h3>Bạn muốn nhận cảnh báo mưa?</h3>
+                    <p style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Đừng để những cơn mưa bất chợt làm
+                        phiền bạn.</p>
+                    <button class="promo-btn" onclick="window.location.href='../register.html'">Tạo tài khoản miễn
+                        phí</button>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>
