@@ -21,7 +21,7 @@ Dashboard được thiết kế theo tư duy Bento-Grid, tối ưu hóa UI/UX gi
 * **Phát hiện Bất thường (Anomaly Detection):** Dễ dàng nhận diện các đỉnh điểm cực đoan của thời tiết (VD: Gió giật mạnh, lượng mưa đột biến do bão/áp thấp).
 
 ## 📸 Giao diện Báo cáo (Dashboard Preview)
-![Vietnam Weather Power BI Dashboard](https://github.com/haonguyen163/Du-bao-thoi-tiet/blob/main/ShowCase/)
+![Vietnam Weather Power BI Dashboard](https://github.com/haonguyen163/Du-bao-thoi-tiet/blob/main/ShowCase/img_powerbi.jpg)
 
 ## 💡 Insight Rút ra (Key Insights)
 1. Nhiệt độ cảm nhận (Feels like) luôn có xu hướng chênh lệch cao hơn so với nhiệt độ thực tế do ảnh hưởng của độ ẩm đặc trưng tại Việt Nam.
