@@ -23,7 +23,7 @@ Dashboard được thiết kế theo tư duy Bento-Grid, tối ưu hóa UI/UX gi
 ## 📸 Giao diện Báo cáo (Dashboard Preview)
 ![Vietnam Weather Power BI Dashboard](https://github.com/haonguyen163/Du-bao-thoi-tiet/blob/main/ShowCase/img_powerbi.jpg)
 
-File Power BI: https://github.com/haonguyen163/Du-bao-thoi-tiet/blob/main/Du%20bao%20thoi%20tiet/Weather_vn.pbix
+File Power BI: https://github.com/haonguyen163/Du-bao-thoi-tiet/blob/main/Du%20bao%20thoi%20tiet
 ## 💡 Insight Rút ra (Key Insights)
 1. Nhiệt độ cảm nhận (Feels like) luôn có xu hướng chênh lệch cao hơn so với nhiệt độ thực tế do ảnh hưởng của độ ẩm đặc trưng tại Việt Nam.
 2. Trạng thái thời tiết thống trị trong tập dữ liệu là "Overcast clouds" (Trời nhiều mây), ảnh hưởng trực tiếp đến biến động lượng mưa trong các tháng đánh giá.
