@@ -1,35 +1,3 @@
-<?php
-session_start();
-require_once 'manager/database.php';
-$db = new Database();
-$error = "";
-$success = "";
-if (isset($_POST['register'])) {
-    $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
-    $re_password = $_POST['re_password'];
-    if (empty($username)&&empty($email)&&empty($password)&&empty($re_password)) {
-        $error = "Vui lòng nhập đầy đủ thông tin!";
-    } elseif ($password !== $re_password) {
-        $error = "Mật khẩu nhập lại không khớp!";
-    } else {
-        $checkSQL = "SELECT id FROM data_user WHERE username = ? OR email = ?";
-        $checkExist = $db->select($checkSQL, 'ss', [$username, $email]);
-        if (!empty($checkExist)) {
-            $error = "Tên đăng nhập hoặc Email đã được sử dụng!";
-        } else {
-            $sql = "INSERT INTO data_user (username, email, password) VALUES (?, ?, ?)";
-            $result = $db->execute($sql, 'sss', [$username, $email, $hashed_password]);
-            if ($result) {
-                $success = "Đăng ký thành công! Bạn có thể đăng nhập ngay.";
-            } else {
-                $error = "Lỗi hệ thống, vui lòng thử lại sau!";
-            }
-        }
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -40,7 +8,6 @@ if (isset($_POST['register'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* GIỮ NGUYÊN CSS CŨ (Layout & Background) */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         
         body {
@@ -55,10 +22,9 @@ if (isset($_POST['register'])) {
             border-radius: 30px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            min-height: 550px; /* Tăng chiều cao chút cho form thoáng */
+            min-height: 550px;
         }
 
-        /* CỘT TRÁI - BRANDING (Giữ style xanh cũ) */
         .brand-panel {
             flex: 0.8; padding: 40px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -66,7 +32,6 @@ if (isset($_POST['register'])) {
             color: white; text-align: center; position: relative;
         }
         
-        /* Vòng tròn trang trí */
         .brand-panel::before {
             content: ''; position: absolute; top: -50px; left: -50px;
             width: 150px; height: 150px; background: rgba(255, 255, 255, 0.2); border-radius: 50%;
@@ -76,7 +41,6 @@ if (isset($_POST['register'])) {
         .brand-title { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
         .brand-desc { font-size: 16px; opacity: 0.9; max-width: 250px; line-height: 1.5; }
 
-        /* CỘT PHẢI - FORM ĐĂNG KÝ (Phần mới) */
         .form-panel {
             flex: 1.2; padding: 50px;
             display: flex; flex-direction: column; justify-content: center;
@@ -86,7 +50,6 @@ if (isset($_POST['register'])) {
         .form-header h2 { font-size: 28px; color: #2c3e50; font-weight: 700; margin-bottom: 5px; }
         .form-header p { font-size: 14px; color: #7f8c8d; }
 
-        /* Style cho Input */
         .input-group { margin-bottom: 20px; position: relative; }
         
         .input-group label {
@@ -94,19 +57,17 @@ if (isset($_POST['register'])) {
         }
 
         .input-group input {
-            width: 100%; padding: 12px 15px; padding-left: 40px; /* Chừa chỗ cho icon */
+            width: 100%; padding: 12px 15px; padding-left: 40px;
             border: 2px solid #eef2f5; border-radius: 12px;
             background: #f4f7f6; outline: none; transition: 0.3s; color: #2c3e50;
         }
 
         .input-group input:focus { border-color: #4facfe; background: #fff; }
 
-        /* Icon trong input */
         .input-group i {
             position: absolute; left: 15px; top: 38px; color: #a4b0be; font-size: 14px;
         }
 
-        /* Nút Đăng Ký */
         .btn-submit {
             width: 100%; padding: 15px; margin-top: 10px;
             border: none; border-radius: 12px;
@@ -118,12 +79,20 @@ if (isset($_POST['register'])) {
 
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 172, 254, 0.6); }
 
-        /* Link chuyển trang */
         .switch-link { margin-top: 25px; text-align: center; font-size: 14px; color: #7f8c8d; }
         .switch-link a { color: #4facfe; text-decoration: none; font-weight: 600; }
         .switch-link a:hover { text-decoration: underline; }
 
-        /* Responsive */
+        .alert-error {
+            background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a;
+            padding: 10px; margin-bottom: 20px; border-radius: 10px; font-size: 14px; text-align: center;
+        }
+        
+        .alert-success {
+            background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+            padding: 10px; margin-bottom: 20px; border-radius: 10px; font-size: 14px; text-align: center;
+        }
+
         @media (max-width: 768px) {
             .container-card { flex-direction: column; }
             .brand-panel { padding: 30px; min-height: 200px; }
@@ -148,36 +117,49 @@ if (isset($_POST['register'])) {
                 <p>Nhập thông tin bên dưới để bắt đầu nhé!</p>
             </div>
 
-            <form action="#" method="POST">
+            <?php if (!empty($data['error'])): ?>
+                <div class="alert-error">
+                    <i class="fa-solid fa-circle-exclamation"></i> <?= htmlspecialchars($data['error']); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($data['success'])): ?>
+                <div class="alert-success">
+                    <i class="fa-solid fa-circle-check"></i> <?= htmlspecialchars($data['success']); ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- 🛠️ ĐÃ SỬA: Để trống action giúp trình duyệt gửi POST thẳng lên chính nó mà không lo mất chữ Weather_WebApp -->
+            <form action="" method="POST">
                 <div class="input-group">
                     <label>Tên hiển thị</label>
                     <i class="fa-solid fa-user"></i>
-                    <input type="text" placeholder="Ví dụ: Nguyen Van A" name="username">
+                    <input type="text" placeholder="Ví dụ: Nguyen Van A" name="username" value="<?= htmlspecialchars($data['username'] ?? ''); ?>" required>
                 </div>
 
                 <div class="input-group">
                     <label>Email</label>
                     <i class="fa-solid fa-envelope"></i>
-                    <input type="email" placeholder="name@example.com" name="email">
+                    <input type="email" placeholder="name@example.com" name="email" value="<?= htmlspecialchars($data['email'] ?? ''); ?>" required>
                 </div>
 
                 <div class="input-group">
                     <label>Mật khẩu</label>
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" placeholder="••••••••" name="password">
+                    <input type="password" placeholder="••••••••" name="password" required>
                 </div>
 
                 <div class="input-group">
                     <label>Nhập Lại Mật khẩu</label>
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" placeholder="••••••••" name="re_password">
+                    <input type="password" placeholder="••••••••" name="re_password" required>
                 </div>
 
                 <button type="submit" class="btn-submit" name="register">Đăng Ký Ngay</button>
             </form>
 
             <div class="switch-link">
-                Đã có tài khoản? <a href="login.php">Đăng nhập</a>
+                Đã có tài khoản? <a href="/Weather_WebApp/auth/login">Đăng nhập</a>
             </div>
         </div>
     </div>

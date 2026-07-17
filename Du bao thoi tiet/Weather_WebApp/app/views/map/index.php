@@ -1,10 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
-    exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -14,7 +7,9 @@ if (!isset($_SESSION['user_id'])) {
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../public/css/style.css">
+    
+    <!-- 🛠️ ĐÃ SỬA: Link CSS tuyệt đối để tránh vỡ giao diện trên Router ảo -->
+    <link rel="stylesheet" href="/Weather_WebApp/public/css/style.css">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -41,16 +36,17 @@ if (!isset($_SESSION['user_id'])) {
 <body>
 
     <div class="dashboard-container">
+        <!-- 🛠️ ĐÃ SỬA: Đồng bộ Menu Sidebar theo các route ảo MVC -->
         <nav class="sidebar">
             <div class="logo">
                 <i class="fa-solid fa-cloud-bolt"></i> SkyCast
             </div>
             <ul class="menu-list">
-                <li class="menu-item" onclick="window.location.href='index.php'"><i class="fa-solid fa-chart-pie"></i> Tổng quan</li>
+                <li class="menu-item" onclick="window.location.href='/Weather_WebApp/dashboard/index'"><i class="fa-solid fa-chart-pie"></i> Tổng quan</li>
                 <li class="menu-item active"><i class="fa-solid fa-location-dot"></i> Bản đồ</li>
-                <li class="menu-item" onclick="window.location.href='history.php'"><i class="fa-solid fa-calendar-days"></i> Lịch sử</li>
-                <li class="menu-item" onclick="window.location.href='setting.php'"><i class="fa-solid fa-gear"></i> Cài đặt</li>
-                <li class="menu-item" onclick="window.location.href='../logout.php'">
+                <li class="menu-item" onclick="window.location.href='/Weather_WebApp/dashboard/history'"><i class="fa-solid fa-calendar-days"></i> Lịch sử</li>
+                <li class="menu-item" onclick="window.location.href='/Weather_WebApp/dashboard/setting'"><i class="fa-solid fa-gear"></i> Cài đặt</li>
+                <li class="menu-item" onclick="confirmLogout()">
                     <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
                 </li>
             </ul>
@@ -64,7 +60,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
                 <div class="user-profile">
                     <div class="avatar">
-                        <img src="https://ui-avatars.com/api/?name=<?= $_SESSION['username'] ?? 'User' ?>&background=0D8ABC&color=fff" alt="User">
+                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['username'] ?? 'User') ?>&background=0D8ABC&color=fff" alt="User">
                     </div>
                 </div>
             </header>
@@ -76,51 +72,27 @@ if (!isset($_SESSION['user_id'])) {
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. CẤU HÌNH API KEY (Thay key của bạn vào đây)
+        // 1. CẤU HÌNH API KEY
         const API_KEY = "e6dacaf9029357e7e8fc942a5b864ad5"; 
 
         // 2. KHỞI TẠO BẢN ĐỒ (Tọa độ mặc định: TP.HCM)
-        // setView([Vĩ độ, Kinh độ], Độ zoom)
         var map = L.map('weather-map').setView([10.7769, 106.7009], 6);
 
-        // 3. THÊM LỚP NỀN (BASE MAP) - Dùng OpenStreetMap (Miễn phí)
+        // 3. THÊM LỚP NỀN (BASE MAP) - Dùng OpenStreetMap
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
         // 4. THÊM CÁC LỚP THỜI TIẾT TỪ OWM
-        
-        // Lớp Mây (Clouds)
-        var clouds = L.tileLayer(`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            opacity: 0.8
-        });
-
-        // Lớp Mưa (Precipitation)
-        var rain = L.tileLayer(`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            opacity: 0.7
-        });
-
-        // Lớp Nhiệt độ (Temperature)
-        var temp = L.tileLayer(`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            opacity: 0.6
-        });
-
-        // Lớp Tốc độ gió (Wind Speed)
-        var wind = L.tileLayer(`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            opacity: 0.6
-        });
-
-        // Lớp Áp suất (Pressure)
-        var pressure = L.tileLayer(`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            opacity: 0.6
-        });
+        var clouds = L.tileLayer(`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`, { opacity: 0.8 });
+        var rain = L.tileLayer(`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`, { opacity: 0.7 });
+        var temp = L.tileLayer(`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`, { opacity: 0.6 });
+        var wind = L.tileLayer(`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${API_KEY}`, { opacity: 0.6 });
+        var pressure = L.tileLayer(`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${API_KEY}`, { opacity: 0.6 });
 
         // 5. TẠO BỘ ĐIỀU KHIỂN ĐỂ BẬT/TẮT CÁC LỚP
-        var baseMaps = {
-            "Bản đồ thường": osm
-        };
-
+        var baseMaps = { "Bản đồ thường": osm };
         var overlayMaps = {
             "☁️ Mây bao phủ": clouds,
             "🌧️ Lượng mưa": rain,
@@ -129,13 +101,18 @@ if (!isset($_SESSION['user_id'])) {
             "⏲️ Áp suất": pressure
         };
 
-        // Thêm widget chọn layer vào góc trên bên phải
         L.control.layers(baseMaps, overlayMaps).addTo(map);
 
         // Mặc định bật lớp Mưa và Nhiệt độ lên cho sinh động
         rain.addTo(map);
         temp.addTo(map);
 
+        // 🛠️ HÀM ĐĂNG XUẤT AN TOÀN ĐỒNG BỘ
+        function confirmLogout() {
+            if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?")) {
+                window.location.href = "/Weather_WebApp/auth/logout";
+            }
+        }
     </script>
 </body>
 </html>

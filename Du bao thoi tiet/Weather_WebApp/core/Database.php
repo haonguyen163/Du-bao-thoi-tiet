@@ -16,6 +16,7 @@ class Database
             die("Kết nối thất bại: " . $e->getMessage());
         }
     }
+
     public function select($sql, $type = "", $param = [])
     {
         $stmt = $this->conn->prepare($sql);
@@ -33,13 +34,15 @@ class Database
         $stmt->close();
         return $data;
     }
+
     public function execute($sql, $type = "", $param = [])
     {
-        $stmt = $this->conn->prepare($sql); {
+        $stmt = $this->conn->prepare($sql);
+        // 🛠️ ĐÃ SỬA: Bọc khối die vào câu lệnh kiểm tra if chính xác
+        if (!$stmt) {
             die("Lỗi SQL (Prepare Failed): " . $this->conn->error . " <br> SQL: " . $sql);
         }
         if (!empty($param)) {
-
             if (strlen($type) !== count($param)) {
                 die("Lỗi Code: Số lượng kiểu dữ liệu ('$type') không khớp với số lượng tham số truyền vào (" . count($param) . ").");
             }
@@ -52,6 +55,7 @@ class Database
         $stmt->close();
         return $success;
     }
+
     public function count($sql, $type = "", $param = [])
     {
         $stmt = $this->conn->prepare($sql);
@@ -68,6 +72,7 @@ class Database
         $stmt->close();
         return $total ?? 0;
     }
+
     public function getLastId()
     {
         return $this->conn->insert_id;
