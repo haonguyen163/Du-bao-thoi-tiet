@@ -19,7 +19,7 @@ print("SERVER AI: STANDARD MASTER VERSION")
 print("=" * 60)
 
 # CẤU HÌNH GEMINI API KEY MỚI CỦA CẬU
-GEMINI_API_KEY = "AQ.Ab8RN6KE3ozk0ULxCGHeZc26w7SRANzRT2VYBmBhBW4UlAMqyA"
+GEMINI_API_KEY = " "#do chính sach bao mat nen ko the de API key gemini (api_python)
 
 try:
     genai.configure(api_key=GEMINI_API_KEY)
