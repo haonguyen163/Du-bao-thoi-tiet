@@ -1,4 +1,3 @@
-
 <?php
 class UserModel {
     private $db;
@@ -19,14 +18,13 @@ class UserModel {
         return !empty($result);
     }
 
-    // 🛠️ SỬA TẠI ĐÂY: Khai báo và băm mật khẩu chuẩn mã hóa trước khi INSERT vào DB
+    
     public function registerUser($username, $email, $password) {
-        // Vì trong code cũ của cậu dùng biến $hashed_password nhưng chưa băm, 
-        // ở đây tớ sẽ băm luôn bằng MD5 hoặc Password_Hash (tùy DB cũ của cậu lưu dạng nào).
-        // Ví dụ dùng Password_Hash chuẩn PHP:
+        // Băm mật khẩu bằng Bcrypt bảo mật[cite: 6]
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         
-        $sql = "INSERT INTO data_user (username, email, password) VALUES (?, ?, ?)";
+        // Thêm trường role vào câu lệnh SQL
+        $sql = "INSERT INTO data_user (username, email, password, role) VALUES (?, ?, ?, 'user')";
         return $this->db->execute($sql, 'sss', [$username, $email, $hashed_password]);
     }
 }

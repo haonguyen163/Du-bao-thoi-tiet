@@ -1,8 +1,10 @@
 <?php
 class WeatherModel {
-    private $csvPath = 'C:\Users\hao09\Downloads\weather\weather-vn-4.csv'; 
-    // 🛠️ Kiểm tra xem route ở server_weather.py của cậu có đúng là /predict_all không nhé
-   private $apiUrl = 'http://localhost:5000/predict_all'; 
+    private $csvPath = 'C:\Users\hao09\Downloads\weather\weather-vn-1.csv'; 
+    
+    // Khai báo 2 endpoint dự phòng để tự động chuyển đổi nếu một trong hai đầu bị nghẽn
+    private $apiUrlPrimary = 'http://127.0.0.1:5000/predict_all';
+    private $apiUrlSecondary = 'http://localhost:5000/predict_all';
 
     // 1. Đọc dòng cuối cùng của file CSV
     public function getLatestWeatherInput() {
@@ -24,45 +26,84 @@ class WeatherModel {
                     "province"      => floatval($data_csv[1]),
                     "temperature"   => floatval($data_csv[3]), 
                     "humidity"      => floatval($data_csv[6]), 
-                    "wind_speed"    => floatval($data_csv[11]), 
+                    "wind_speed"    => floatval($data_csv[11]),
                     "precipitation" => floatval($data_csv[9]), 
                     "hour"          => intval(date("H", $timestamp)), 
                     "month"         => intval(date("m", $timestamp)),
-                    "year"          => date("Y", $timestamp) 
+                    "year"          => date("Y", $timestamp)
                 ];
             }
         }
         return $current_weather;
     }
 
-    // 2. cURL gửi JSON sang Python AI Server
+    // 2. cURL gửi JSON sang Python AI Server với cơ chế Fallback và Headers chuẩn
     public function getAiPredictions($payload) {
+        // Thử kết nối bằng Endpoint chính trước (127.0.0.1)
+        $result = $this->executeCurl($this->apiUrlPrimary, $payload);
+        
+        // Nếu endpoint chính thất bại, tự động chuyển sang endpoint phụ (localhost) để lấy dữ liệu
+        if (isset($result['success']) && $result['success'] === false) {
+            $result = $this->executeCurl($this->apiUrlSecondary, $payload);
+        }
+        
+        return $result;
+    }
+
+    // Hàm thực thi cURL lõi được tối ưu hóa mạng nội bộ XAMPP
+    private function executeCurl($url, $payload) {
         try {
-            $ch = curl_init($this->apiUrl);
+            $ch = curl_init($url);
+            
+            // Cấu hình payload dữ liệu JSON[cite: 11]
+            $jsonData = json_encode($payload);
+            
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-            // 🛠️ ĐÃ SỬA: Tăng timeout lên 15 giây để kịp đợi Google Gemini API phản hồi advice
-            curl_setopt($ch, CURLOPT_TIMEOUT, 15); 
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            
+           
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30); 
+            
+            
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            
+            
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            
+            // Cấu hình Headers và User-Agent chuẩn để Flask không từ chối request
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($jsonData),
+                'Accept: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) SkyCastPHP/1.0');
 
             $response = curl_exec($ch);
             
-            // Check lỗi cURL nếu có
+            // Kiểm tra lỗi hệ thống cURL (nếu có)
             if (curl_errno($ch)) {
                 $error_msg = curl_error($ch);
                 curl_close($ch);
-                return ['success' => false, 'error' => 'cURL Error: ' . $error_msg];
+                return [
+                    'success' => false, 
+                    'error' => 'cURL dịch vụ lỗi (' . $url . '): ' . $error_msg
+                ];
             }
             
             curl_close($ch);
 
             if ($response) {
-                return json_decode($response, true);
+                $data = json_decode($response, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return $data;
+                }
+                return ['success' => false, 'error' => 'Dữ liệu trả về từ Python không đúng định dạng JSON chuẩn!'];
             }
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
-        return ['success' => false, 'error' => 'Không thể kết nối Server Python AI!'];
+        return ['success' => false, 'error' => 'Server Python phản hồi trống (Empty Response)!'];
     }
 }

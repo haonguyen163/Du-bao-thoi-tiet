@@ -237,7 +237,7 @@
                 </div>
             <?php endif; ?>
 
-            <!-- 🛠️ ĐÃ SỬA: Để trống action để dữ liệu POST tự khớp vào URL hiện tại -->
+           
             <form action="" method="POST">
                 <div class="input-group">
                     <label>Email</label>

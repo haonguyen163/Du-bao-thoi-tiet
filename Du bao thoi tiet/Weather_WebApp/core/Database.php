@@ -38,7 +38,7 @@ class Database
     public function execute($sql, $type = "", $param = [])
     {
         $stmt = $this->conn->prepare($sql);
-        // 🛠️ ĐÃ SỬA: Bọc khối die vào câu lệnh kiểm tra if chính xác
+        
         if (!$stmt) {
             die("Lỗi SQL (Prepare Failed): " . $this->conn->error . " <br> SQL: " . $sql);
         }

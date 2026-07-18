@@ -6,13 +6,13 @@
     <title>SkyCast Pro - Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css"> <!-- Sử dụng CSS dùng chung[cite: 4] -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- Sử dụng CSS dùng chung -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
     <div class="dashboard-container">
-        <!-- Sidebar Menu dành riêng cho Admin[cite: 1] -->
+        <!-- Sidebar Menu dành riêng cho Admin -->
         <nav class="sidebar">
             <div class="logo"><i class="fa-solid fa-cloud-bolt"></i> SkyCast</div>
             <ul class="menu-list">
@@ -48,7 +48,7 @@
                             <p>Đang tải danh sách file...</p>
                         </div>
                         <p style="margin-top: 10px; font-size: 12px; color: #7f8c8d;">
-                            *Copy file .csv mới vào thư mục /data của AI Server để nhận.[cite: 1]
+                            *Copy file .csv mới vào thư mục /data của AI Server để nhận.
                         </p>
                     </div>
 
@@ -75,9 +75,9 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Lấy danh sách file CSV huấn luyện[cite: 1]
+            // Lấy danh sách file CSV huấn luyện
             loadFiles();
-            // Lấy lời khuyên nhanh cho admin để check trạng thái server[cite: 1]
+            // Lấy lời khuyên nhanh cho admin để check trạng thái server
             fetchAdminAdvice();
         });
 
@@ -116,7 +116,7 @@
         }
 
         async function triggerRetrain() {
-            // Sử dụng SweetAlert2 đồng bộ thay cho hàm confirm thô cũ[cite: 1]
+            // Sử dụng SweetAlert2 đồng bộ thay cho hàm confirm thô cũ
             Swal.fire({
                 title: 'Huấn luyện lại hệ thống?',
                 text: "Quá trình này sẽ gọi script huấn luyện và nạp lại mô hình máy học!",

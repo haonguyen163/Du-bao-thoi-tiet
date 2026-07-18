@@ -129,7 +129,6 @@
                 </div>
             <?php endif; ?>
 
-            <!-- 🛠️ ĐÃ SỬA: Để trống action giúp trình duyệt gửi POST thẳng lên chính nó mà không lo mất chữ Weather_WebApp -->
             <form action="" method="POST">
                 <div class="input-group">
                     <label>Tên hiển thị</label>

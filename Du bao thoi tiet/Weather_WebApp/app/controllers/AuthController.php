@@ -23,12 +23,22 @@ class AuthController extends Controller {
                 $user = $userModel->getUserByEmail($email);
 
                 if ($user) {
-                    if ($password === $user['password']) { // So sánh mật khẩu thuần từ DB cũ
+                    // Trường hợp 1: Mật khẩu dạng đã băm bảo mật (Bcrypt) -> Dùng password_verify
+                    // Trường hợp 2: Mật khẩu thuần text từ data test cũ -> So sánh === trực tiếp
+                    $isPasswordValid = false;
+                    
+                    if (strpos($user['password'], '$2y$') === 0) {
+                        $isPasswordValid = password_verify($password, $user['password']);
+                    } else {
+                        $isPasswordValid = ($password === $user['password']);
+                    }
+
+                    if ($isPasswordValid) { 
                         $_SESSION['user_id'] = $user['id'];
                         $_SESSION['username'] = $user['username'];
                         $_SESSION['email'] = $user['email'];
 
-                        // 🛠️ ĐÃ SỬA: Chuyển hướng chuẩn xác theo các action của DashboardController
+                        // Chuyển hướng chuẩn xác theo các action của DashboardController
                         if ($user['role'] == 'admin') {
                             header("Location: /Weather_WebApp/dashboard/admin");
                             exit();
@@ -77,7 +87,6 @@ class AuthController extends Controller {
                     $result = $userModel->registerUser($username, $email, $password);
                     if ($result) {
                         $success = "Đăng ký thành công! Bạn có thể đăng nhập ngay.";
-                        // Xóa trống dữ liệu cũ khi thành công để form sạch sẽ
                         $username = ""; 
                         $email = "";
                     } else {
